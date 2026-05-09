@@ -1,5 +1,6 @@
 import pandas
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Sekcja 1: wczytanie danych
@@ -35,7 +36,7 @@ plt.title('Rozkład klas jakości powietrza (Balans klas)')
 plt.xlabel('Jakość powietrza')
 plt.ylabel('Liczba próbek')
 plt.grid(axis='y')
-plt.show()
+plt.savefig('balans.png')
 
 # Sekcja 3: sprawdzenie danych
 
@@ -48,3 +49,13 @@ if total_missing == 0:
 else:
     print("Znaleziono braki w danych")
 
+# Sekcja 4: wizualizacja korelacji cech
+
+corelation = np.corrcoef(X, rowvar=False)
+
+plt.figure(figsize=(10, 8))
+
+sns.heatmap(corelation, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5, xticklabels=column_names[:-1], yticklabels=column_names[:-1])
+plt.title('Macierz korelacji cech środowiskowych')
+plt.tight_layout()
+plt.savefig('heatmapa.png')
