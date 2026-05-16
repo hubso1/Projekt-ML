@@ -52,13 +52,13 @@ console_output_array = []
 for index, model_name in enumerate(classifiers_names):
     mean = np.mean(results[index])
     std = np.std(results[index])
-    reasult_str = f"{mean:.3f} ± {std:.3f}"
+    result_str = f"{mean:.3f} ± {std:.3f}"
 
     if mean >= 0.99:
-        meaning = "Dane systetyczne"
+        meaning = "Dane syntetyczne"
     else:
         meaning = "Dane nie syntetyczne"
 
-    console_output_array.append([model_name, reasult_str, meaning])
+    console_output_array.append([model_name, result_str, meaning])
 
 print(tabulate(console_output_array, headers=["model", "wyniki (BAC)", "Charakter etykiety"], tablefmt="fancy_grid"))

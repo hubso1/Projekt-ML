@@ -3,17 +3,12 @@ from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 
 
-
-
-
-
-
 def basicPatternRecognition(X, y, classifiers):
     """ Trenowanie i testowanie wybranych klasyfikatorów 
 
     Args:
-        X (matrix): Macież cech
-        y (array): tablica kalas
+        X (matrix): Macierz cech
+        y (array): Tablica klas
         classifiers (array): tablica klasyfikatorów
     """
     results = np.zeros((len(classifiers), 10), dtype=float)

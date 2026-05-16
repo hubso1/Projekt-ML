@@ -25,7 +25,7 @@ def checkData(X):
     """ Gprawdzenie danych
 
     Args:
-        X (matrix): Macież cech
+        X (matrix): Macierz cech
     """
     print("\nBRAKI DANYCH")
 
@@ -40,7 +40,7 @@ def checkClassBinalse(y):
     """ Sprawdzenie zbalansowania klas
 
     Args:
-        y (matrix): Macież klas
+        y (matrix): Macierz klas
     """
 
     unique_classes, counts = np.unique(y, return_counts=True)
