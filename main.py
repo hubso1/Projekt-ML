@@ -2,6 +2,13 @@ import pandas
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from modules.visualisation import saveHeatMap, checkData, checkClassBinalse
+from modules.pattern_recognition import basicPatternRecognition
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from tabulate import tabulate
 
 # Sekcja 1: wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -22,40 +29,36 @@ print(f"Kształt y (etykiety): {y.shape}")
 
 
 # Sekcja 2: sprawdzenie zbalansowania klas
-unique_classes, counts = np.unique(y, return_counts=True)
 
-print("\nBALANS KLAS")
-for cls, count in zip(unique_classes, counts):
-    print(f"{cls}: {count}")
-
-colors = ['green', 'red', 'gold', 'orange']
-
-plt.figure(figsize=(8, 5))
-plt.bar(unique_classes, counts, color=colors)
-plt.title('Rozkład klas jakości powietrza (Balans klas)')
-plt.xlabel('Jakość powietrza')
-plt.ylabel('Liczba próbek')
-plt.grid(axis='y')
-plt.savefig('balans.png')
+checkClassBinalse(y)
 
 # Sekcja 3: sprawdzenie danych
 
-print("\nBRAKI DANYCH")
-
-total_missing = np.isnan(X).sum()
-print(f"Łączna liczba pustych miejsc w cechach (X): {total_missing}")
-if total_missing == 0:
-    print("Zbiór cech jest kompletny, nie ma żadnych pustych komórek")
-else:
-    print("Znaleziono braki w danych")
+checkData(X)
 
 # Sekcja 4: wizualizacja korelacji cech
 
-corelation = np.corrcoef(X, rowvar=False)
+saveHeatMap(X, column_names)
 
-plt.figure(figsize=(10, 8))
+# Sekcja 5: Trenowanie i testowanie
 
-sns.heatmap(corelation, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5, xticklabels=column_names[:-1], yticklabels=column_names[:-1])
-plt.title('Macierz korelacji cech środowiskowych')
-plt.tight_layout()
-plt.savefig('heatmapa.png')
+classifiers = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(), SVC()]
+classifiers_names = ["GNB", "KNN", "DTC", "SVC"]
+
+results = basicPatternRecognition(X, y, classifiers)
+
+console_output_array = []
+
+for index, model_name in enumerate(classifiers_names):
+    mean = np.mean(results[index])
+    std = np.std(results[index])
+    result_str = f"{mean:.3f} ± {std:.3f}"
+
+    if mean >= 0.99:
+        meaning = "Dane syntetyczne"
+    else:
+        meaning = "Dane nie syntetyczne"
+
+    console_output_array.append([model_name, result_str, meaning])
+
+print(tabulate(console_output_array, headers=["model", "wyniki (BAC)", "Charakter etykiety"], tablefmt="fancy_grid"))
