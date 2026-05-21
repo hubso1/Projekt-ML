@@ -3,49 +3,36 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import RepeatedStratifiedKFold
-from imblearn.over_sampling import SMOTE, BorderlineSMOTE
-from imblearn.under_sampling import RandomUnderSampler, NearMiss
 
 
-
-def evaluate_resamplers(X, y, classifiers, classifiers_name):
-    """
-    Przeprowadzenie walidację krzyżową na różnych metodach resamplingu.
+def evaluate_resamplers(X, y, classifiers, resamplers):
+    """Przeprowadzenie walidację krzyżową na różnych metodach resamplingu.
     Resampling odbywa się wewnątrz pętli, tylko na zbiorze treningowym
+
+    Args:
+        X (matrix): Macierz cech
+        y (array): Tablica klas
+        classifiers (array): tablica klasyfikatorów
+        resamplers (array): tablica metod resamplingu
     """
-    resamplers = [
-        ("SMOTE", SMOTE()),
-        ("BorderlineSMOTE", BorderlineSMOTE()),
-        ("RUS", RandomUnderSampler()),
-        ("NearMiss", NearMiss())
-    ]
 
-    results = {}
+    results = np.zeros((len(classifiers), len(resamplers), 10), dtype=float)
 
-    rsf = RepeatedStratifiedKFold(n_splits=5, n_repeats=2)
 
-    for name, resampler in resamplers:
+    rsf  = RepeatedStratifiedKFold(n_splits=2, n_repeats=5)
+    for fold_index, (train_index, test_index) in enumerate(rsf.split(X, y)):
 
-        for index, clf in enumerate(classifiers):
 
-            clf_name = classifiers_name[index]
+        for clf_index, clf in enumerate(classifiers):
 
-            bac_scores = []
-
-            for train_index, test_index in rsf.split(X, y):
+            for resampler_index, resampler in enumerate(resamplers):
                 X_train, X_test = X[train_index], X[test_index]
                 y_train, y_test = y[train_index], y[test_index]
 
-
                 X_train_res, y_train_res = resampler.fit_resample(X_train, y_train)
-
                 clf.fit(X_train_res, y_train_res)
                 predict = clf.predict(X_test)
-
                 bac = balanced_accuracy_score(y_test, predict)
-                bac_scores.append(bac)
+                results[clf_index, resampler_index, fold_index] = bac
 
-            key = f"{clf_name} + {name}"
-            results[key] = bac_scores
-        
-    return results
+    return(results)

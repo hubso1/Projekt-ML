@@ -58,7 +58,7 @@ def checkClassBinalse(y):
     plt.savefig('balans.png')
 
 
-def saveResamplingBarChart(baseline_results, resampling_results, classifiers_names):
+def saveResamplingBarChart(baseline_results, resampling_results, classifiers_names, resampling_names):
     """ Generowanie grupowego wykresu słupkowego porównujący wyniki resamplingu.
 
     Args:
@@ -72,9 +72,9 @@ def saveResamplingBarChart(baseline_results, resampling_results, classifiers_nam
         mean_bac = np.mean(baseline_results[index])
         all_results.append({'Klasyfikator': clf_name, 'Metoda': 'Baseline', 'BAC': mean_bac})
 
-    for combo_name, scores in resampling_results.items():
-        clf_name, method_name = combo_name.split(' + ')
-        all_results.append({'Klasyfikator': clf_name, 'Metoda': method_name, 'BAC': np.mean(scores)})
+    for classifier_index, classifier_result in enumerate(resampling_results):
+        for resampler_index, resampler_result in enumerate (classifier_result):
+            all_results.append({'Klasyfikator': classifiers_names[classifier_index], 'Metoda': resampling_names[resampler_index], 'BAC': np.mean(resampler_result)})
 
     df = pd.DataFrame(all_results)
 

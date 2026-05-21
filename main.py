@@ -10,6 +10,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from tabulate import tabulate
+from imblearn.over_sampling import SMOTE, BorderlineSMOTE
+from imblearn.under_sampling import RandomUnderSampler, NearMiss
 
 # Sekcja 1: Wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -66,16 +68,32 @@ print(tabulate(console_output_array, headers=["Model", "Wyniki (BAC)", "Charakte
 
 
 # Sekcja 6: Over/Under-Sampling
-resampling_results = evaluate_resamplers(X, y, classifiers, classifiers_names)
 
-table_to_display = []
-for combination_name, scores in resampling_results.items():
-    mean = np.mean(scores)
-    std = np.std(scores)
-    result_str = f"{mean:.3f} ± {std:.3f}"
+resamplers = [SMOTE(), BorderlineSMOTE(), RandomUnderSampler(), NearMiss()]
+resamplers_names = ["SMOTE", "BorderlineSMOTE", "RUS", "NearMiss"]
 
-    table_to_display.append([combination_name, result_str])
 
-print(tabulate(table_to_display, headers=["Klasyfikator + Metoda", "Średni wynik (BAC)"], tablefmt="fancy_grid"))
+resampling_results = evaluate_resamplers(X, y, classifiers, resamplers)
 
-saveResamplingBarChart(results, resampling_results, classifiers_names)
+# print(resampling_results)
+
+console_output_array = []
+
+for classifier_index, classifier in enumerate(classifiers_names):
+
+    row = [classifier]
+
+    for resampler_index, resampler in enumerate(resamplers):
+        mean = np.mean(resampling_results[classifier_index, resampler_index])
+        std = np.std(resampling_results[classifier_index, resampler_index])
+
+        result_str = f"{mean:.3f} ± {std:.3f}"
+        row.append(result_str)
+
+    console_output_array.append(row)
+ 
+
+print(tabulate(console_output_array, headers=[""] + resamplers_names, tablefmt="fancy_grid"))
+
+
+saveResamplingBarChart(results, resampling_results, classifiers_names, resamplers_names)
