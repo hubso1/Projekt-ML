@@ -1,15 +1,13 @@
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-
+import pandas as pd
 
 def saveHeatMap(X, column_names):
     """ Generacja i zapisanie heatmap
 
     Args:
-        X (matrix): Macież cech
+        X (matrix): Macierz cech
         column_names (array): tablica nazw wszystkich kolumn
     """
     corelation = np.corrcoef(X, rowvar=False)
@@ -22,7 +20,7 @@ def saveHeatMap(X, column_names):
     plt.savefig('heatmapa.png')
 
 def checkData(X):
-    """ Gprawdzenie danych
+    """ Sprawdzenie danych
 
     Args:
         X (matrix): Macierz cech
@@ -58,3 +56,36 @@ def checkClassBinalse(y):
     plt.ylabel('Liczba próbek')
     plt.grid(axis='y')
     plt.savefig('balans.png')
+
+
+def saveResamplingBarChart(baseline_results, resampling_results, classifiers_names, resampling_names):
+    """ Generowanie grupowego wykresu słupkowego porównujący wyniki resamplingu.
+
+    Args:
+        baseline_results (array): Wyniki bez resamplingu.
+        resampling_results (dict): Słownik z wynikami po resamplingu.
+        classifiers_names (list): Nazwy testowanych klasyfikatorów.
+    """
+    all_results = []
+
+    for index, clf_name in enumerate(classifiers_names):
+        mean_bac = np.mean(baseline_results[index])
+        all_results.append({'Klasyfikator': clf_name, 'Metoda': 'Baseline', 'BAC': mean_bac})
+
+    for classifier_index, classifier_result in enumerate(resampling_results):
+        for resampler_index, resampler_result in enumerate (classifier_result):
+            all_results.append({'Klasyfikator': classifiers_names[classifier_index], 'Metoda': resampling_names[resampler_index], 'BAC': np.mean(resampler_result)})
+
+    df = pd.DataFrame(all_results)
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=df, x='Klasyfikator', y='BAC', hue='Metoda', palette='viridis')
+
+    plt.title('Porównanie skuteczności klasyfikatorów z różnymi metodami resamplingu')
+    plt.ylabel('Balanced Accuracy (BAC)')
+    plt.ylim(0, 1.1)
+    
+    plt.legend(title='Metoda Preprocessingu')
+    
+    plt.tight_layout()
+    plt.savefig('porownanie_resamplingu.png')
