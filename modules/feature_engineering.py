@@ -22,7 +22,7 @@ def evaluate_features(X, y, classifiers, column_names):
     results = np.zeros((len(classifiers), len(reduction_methods), 10), dtype=float)
 
     rskf = RepeatedStratifiedKFold(n_splits=5, n_repeats=2)
-    smote = BorderlineSMOTE(random_state=42)
+    smote = BorderlineSMOTE()
     scaler = StandardScaler()
 
     for fold_index, (train_index, test_index) in enumerate(rskf.split(X, y)):
