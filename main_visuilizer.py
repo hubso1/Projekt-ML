@@ -54,3 +54,31 @@ def defaulVisuilizer():
         console_output_array.append([model_name, result_str, meaning])
 
     print(tabulate(console_output_array, headers=["Model", "Wyniki (BAC)", "Charakter etykiety"], tablefmt="fancy_grid"))
+
+def featureVisuilizer():
+    try:
+        data_features = np.load("results/results_features.npz", allow_pickle=True)
+        features_results = data_features["features_results"]
+        classifiers_names = data_features["classifiers_names"].tolist()
+        reduction_names = data_features["reduction_names"].tolist()
+    except FileNotFoundError:
+        print("\n Nie znaleziono pliku results_features.npz")
+        return
+
+    console_output_array = []
+
+    for classifier_index, classifier in enumerate(classifiers_names):
+        row = [classifier] 
+
+
+        for red_index, red_name in enumerate(reduction_names):
+
+            mean = np.mean(features_results[classifier_index, red_index])
+            std = np.std(features_results[classifier_index, red_index])
+
+            result_str = f"{mean:.3f} ± {std:.3f}"
+            row.append(result_str)
+
+        console_output_array.append(row)
+
+    print(tabulate(console_output_array, headers=["Klasyfikator"] + reduction_names, tablefmt="fancy_grid"))

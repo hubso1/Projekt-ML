@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from modules.visualisation import saveHeatMap, checkData, checkClassBinalse, saveResamplingBarChart
 from modules.pattern_recognition import basicPatternRecognition
 from modules.resampling import evaluate_resamplers
+from modules.feature_engineering import evaluate_features
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -12,7 +13,7 @@ from sklearn.svm import SVC
 from tabulate import tabulate
 from imblearn.over_sampling import SMOTE, BorderlineSMOTE
 from imblearn.under_sampling import RandomUnderSampler, NearMiss
-from main_visuilizer import defaulVisuilizer, resamplerVisuilizer
+from main_visuilizer import defaulVisuilizer, resamplerVisuilizer, featureVisuilizer
 
 # Sekcja 1: Wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -58,8 +59,6 @@ np.savez(
 )
 
 
-
-
 # Sekcja 6: Over/Under-Sampling
 
 resamplers = [SMOTE(), BorderlineSMOTE(), RandomUnderSampler(), NearMiss()]
@@ -79,3 +78,17 @@ defaulVisuilizer()
 resamplerVisuilizer()
 
 # print(resampling_results)
+
+
+# Sekcja 7: Esktrakcja vs Selekcja cech
+
+features_results, reduction_names = evaluate_features(X, y, classifiers, column_names)
+
+np.savez(
+    "results/results_features.npz", 
+    features_results=features_results, 
+    classifiers_names=classifiers_names, 
+    reduction_names=reduction_names
+)
+
+featureVisuilizer()
