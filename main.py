@@ -12,6 +12,7 @@ from sklearn.svm import SVC
 from tabulate import tabulate
 from imblearn.over_sampling import SMOTE, BorderlineSMOTE
 from imblearn.under_sampling import RandomUnderSampler, NearMiss
+from main_visuilizer import defaulVisuilizer, resamplerVisuilizer
 
 # Sekcja 1: Wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -50,21 +51,13 @@ classifiers_names = ["GNB", "KNN", "DTC", "SVC"]
 
 results = basicPatternRecognition(X, y, classifiers)
 
-console_output_array = []
+np.savez(
+    "results/results_basic.npz", 
+    results=results, 
+    classifiers_names=classifiers_names
+)
 
-for index, model_name in enumerate(classifiers_names):
-    mean = np.mean(results[index])
-    std = np.std(results[index])
-    result_str = f"{mean:.3f} ± {std:.3f}"
 
-    if mean >= 0.99:
-        meaning = "Dane syntetyczne"
-    else:
-        meaning = "Dane nie syntetyczne"
-
-    console_output_array.append([model_name, result_str, meaning])
-
-print(tabulate(console_output_array, headers=["Model", "Wyniki (BAC)", "Charakter etykiety"], tablefmt="fancy_grid"))
 
 
 # Sekcja 6: Over/Under-Sampling
@@ -75,25 +68,14 @@ resamplers_names = ["SMOTE", "BorderlineSMOTE", "RUS", "NearMiss"]
 
 resampling_results = evaluate_resamplers(X, y, classifiers, resamplers)
 
+np.savez(
+    "results/results_resampling.npz", 
+    resampling_results=resampling_results, 
+    classifiers_names=classifiers_names, 
+    resamplers_names=resamplers_names
+)
+
+defaulVisuilizer()
+resamplerVisuilizer()
+
 # print(resampling_results)
-
-console_output_array = []
-
-for classifier_index, classifier in enumerate(classifiers_names):
-
-    row = [classifier]
-
-    for resampler_index, resampler in enumerate(resamplers):
-        mean = np.mean(resampling_results[classifier_index, resampler_index])
-        std = np.std(resampling_results[classifier_index, resampler_index])
-
-        result_str = f"{mean:.3f} ± {std:.3f}"
-        row.append(result_str)
-
-    console_output_array.append(row)
- 
-
-print(tabulate(console_output_array, headers=[""] + resamplers_names, tablefmt="fancy_grid"))
-
-
-saveResamplingBarChart(results, resampling_results, classifiers_names, resamplers_names)
