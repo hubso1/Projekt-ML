@@ -29,15 +29,18 @@ def evaluate_features(X, y, classifiers, column_names):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
-        X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
 
-        X_train_scaled = scaler.fit_transform(X_train_res)
+        X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
+
+        X_train_res, y_train_res = smote.fit_resample(X_train_scaled, y_train)
+
+        
 
         for reduction_index, (name, reducer) in enumerate(reduction_methods):
 
             if name == "SelectKBest":
-                X_train_reduced = reducer.fit_transform(X_train_scaled, y_train_res)
+                X_train_reduced = reducer.fit_transform(X_train_res, y_train_res)
 
                 if fold_index == 0:
                     selected_mask = reducer.get_support()
@@ -45,7 +48,7 @@ def evaluate_features(X, y, classifiers, column_names):
                     print(f"\n[INFO] SelectKBest wybrało 2 najważniejsze cechy: {best_features}")
             
             else:
-                X_train_reduced = reducer.fit_transform(X_train_scaled)
+                X_train_reduced = reducer.fit_transform(X_train_res)
 
             X_test_reduced= reducer.transform(X_test_scaled)
 

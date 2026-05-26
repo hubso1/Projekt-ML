@@ -1,5 +1,5 @@
 from tabulate import tabulate
-from modules.visualisation import saveResamplingBarChart
+from modules.visualisation import saveResamplingBarChart, saveExtractionChart
 import numpy as np
 
 def fileImport():
@@ -82,3 +82,7 @@ def featureVisuilizer():
         console_output_array.append(row)
 
     print(tabulate(console_output_array, headers=["Klasyfikator"] + reduction_names, tablefmt="fancy_grid"))
+    saveExtractionChart(features_results, classifiers_names, reduction_names)
+
+
+featureVisuilizer()
