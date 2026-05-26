@@ -3,6 +3,9 @@ from modules.visualisation import saveResamplingBarChart, saveExtractionChart
 import numpy as np
 
 def fileImport():
+    """Import plików dla funkcji resamplerVisuilizer oraz defaulVisuilizer()
+
+    """
     data_basic = np.load("results/results_basic.npz", allow_pickle=True)
     results = data_basic["results"]
     classifiers_names = data_basic["classifiers_names"].tolist()
@@ -14,6 +17,8 @@ def fileImport():
 
 
 def resamplerVisuilizer():
+    """Finkcja pokazujące wyniki resamplingu z pliku
+    """
     results, classifiers_names, resampling_results, resamplers_names = fileImport()
 
     console_output_array = []
@@ -38,6 +43,8 @@ def resamplerVisuilizer():
     saveResamplingBarChart(results, resampling_results, classifiers_names, resamplers_names)
 
 def defaulVisuilizer():
+    """Funkcja pokazująca podstawowe wyniki z pliku
+    """
     results, classifiers_names, resampling_results, resamplers_names = fileImport()
     console_output_array = []
 
@@ -56,6 +63,8 @@ def defaulVisuilizer():
     print(tabulate(console_output_array, headers=["Model", "Wyniki (BAC)", "Charakter etykiety"], tablefmt="fancy_grid"))
 
 def featureVisuilizer():
+    """Funkcja pokazująca wyniki ekstrakcji cech z pliku
+    """
     try:
         data_features = np.load("results/results_features.npz", allow_pickle=True)
         features_results = data_features["features_results"]

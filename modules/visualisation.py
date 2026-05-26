@@ -95,8 +95,8 @@ def saveExtractionChart(features_results, classifiers_names, reduction_names):
     """ Generowanie grupowego wykresu słupkowego porównujący wyniki ekstrakcji cech.
 
     Args:
-        baseline_results (array): Wyniki bez resamplingu.
-        resampling_results (dict): Słownik z wynikami po resamplingu.
+        features_results (array): Wyniki ekstrakcji.
+        reduction_names (list): Nazwy testowanych funkcji redukcji cech.
         classifiers_names (list): Nazwy testowanych klasyfikatorów.
     """
     all_results = []
@@ -111,7 +111,7 @@ def saveExtractionChart(features_results, classifiers_names, reduction_names):
     plt.figure(figsize=(12, 6))
     sns.barplot(data=df, x='Klasyfikator', y='BAC', hue='Metoda', palette='viridis')
 
-    plt.title('Porównanie skuteczności klasyfikatorów z różnymi metodami resamplingu')
+    plt.title('Porównanie skuteczności metod redukcji cech')
     plt.ylabel('Balanced Accuracy (BAC)')
     plt.ylim(0, 1.1)
     
