@@ -23,9 +23,9 @@ def evaluate_resamplers(X, y, classifiers, resamplers):
     for fold_index, (train_index, test_index) in enumerate(rsf.split(X, y)):
 
 
-        for clf_index, clf in enumerate(classifiers):
-
-            for resampler_index, resampler in enumerate(resamplers):
+        for resampler_index, resampler in enumerate(resamplers):
+        
+            for clf_index, clf in enumerate(classifiers):
                 X_train, X_test = X[train_index], X[test_index]
                 y_train, y_test = y[train_index], y[test_index]
 

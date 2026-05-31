@@ -89,3 +89,33 @@ def saveResamplingBarChart(baseline_results, resampling_results, classifiers_nam
     
     plt.tight_layout()
     plt.savefig('porownanie_resamplingu.png')
+
+
+def saveExtractionChart(features_results, classifiers_names, reduction_names):
+    """ Generowanie grupowego wykresu słupkowego porównujący wyniki ekstrakcji cech.
+
+    Args:
+        features_results (array): Wyniki ekstrakcji.
+        reduction_names (list): Nazwy testowanych funkcji redukcji cech.
+        classifiers_names (list): Nazwy testowanych klasyfikatorów.
+    """
+    all_results = []
+
+
+    for classifier_index, classifier_result in enumerate(features_results):
+        for resampler_index, resampler_result in enumerate (classifier_result):
+            all_results.append({'Klasyfikator': classifiers_names[classifier_index], 'Metoda': reduction_names[resampler_index], 'BAC': np.mean(resampler_result)})
+
+    df = pd.DataFrame(all_results)
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=df, x='Klasyfikator', y='BAC', hue='Metoda', palette='viridis')
+
+    plt.title('Porównanie skuteczności metod redukcji cech')
+    plt.ylabel('Balanced Accuracy (BAC)')
+    plt.ylim(0, 1.1)
+    
+    plt.legend(title='Metoda Preprocessingu')
+    
+    plt.tight_layout()
+    plt.savefig('porownanie_ekstrakcji.png')
