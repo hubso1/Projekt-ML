@@ -2,10 +2,11 @@ import pandas
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 from modules.visualisation import saveHeatMap, checkData, checkClassBinalse, saveResamplingBarChart
 from modules.pattern_recognition import basicPatternRecognition
 from modules.resampling import evaluate_resamplers
-from modules.feature_engineering import evaluate_features
+from modules.feature_engineering import evaluate_features, featureComparasion
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -13,7 +14,8 @@ from sklearn.svm import SVC
 from tabulate import tabulate
 from imblearn.over_sampling import SMOTE, BorderlineSMOTE
 from imblearn.under_sampling import RandomUnderSampler, NearMiss
-from main_visuilizer import defaulVisuilizer, resamplerVisuilizer, featureVisuilizer
+from main_visuilizer import defaulVisuilizer, resamplerVisuilizer, featureVisuilizer, comparationVisuilizer
+from sklearn.feature_selection import SelectKBest, f_classif
 
 # Sekcja 1: Wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -78,17 +80,36 @@ defaulVisuilizer()
 resamplerVisuilizer()
 
 # print(resampling_results)
+reduction_methods = [
+        ("PCA", PCA(n_components=2)),
+        ("SelectKBest", SelectKBest(score_func=f_classif, k=2))
+    ]
 
+reduction_names = ["PCA", "SelectKBest"]
+
+# Sekcja 7: Porównanie ilości cech
+
+comparation_results = featureComparasion(X, y, GaussianNB(), reduction_names)
 
 # Sekcja 7: Esktrakcja vs Selekcja cech
 
-features_results, reduction_names = evaluate_features(X, y, classifiers, column_names)
-
 np.savez(
-    "results/results_features.npz", 
-    features_results=features_results, 
-    classifiers_names=classifiers_names, 
-    reduction_names=reduction_names
+    "results/comparation_results.npz", 
+    comparation_results=comparation_results,
+    reduction_names=reduction_names,
+    feature_count = X.shape[1]
 )
 
-featureVisuilizer()
+comparationVisuilizer()
+
+
+# features_results = evaluate_features(X, y, classifiers, column_names, reduction_methods)
+
+# np.savez(
+#     "results/results_features.npz", 
+#     features_results=features_results, 
+#     classifiers_names=classifiers_names, 
+#     reduction_names=reduction_names
+# )
+
+# featureVisuilizer()

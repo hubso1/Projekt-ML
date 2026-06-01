@@ -94,4 +94,28 @@ def featureVisuilizer():
     saveExtractionChart(features_results, classifiers_names, reduction_names)
 
 
-featureVisuilizer()
+def comparationVisuilizer():
+    try:
+        data_features = np.load("results/comparation_results.npz", allow_pickle=True)
+        comparation_results = data_features["comparation_results"]
+        reduction_names = data_features["reduction_names"].tolist()
+        feature_count = data_features["feature_count"]
+    except FileNotFoundError:
+        print("\n Nie znaleziono pliku results_features.npz")
+        return
+    
+    console_output_array = []
+
+    for reduction_index, reduction_name in enumerate(reduction_names):
+        row = [reduction_name]
+        for feature_index in range(0, feature_count):
+            mean = np.mean(comparation_results[reduction_index, feature_index])
+            std = np.std(comparation_results[reduction_index, feature_index])
+
+            result_str = f"{mean:.3f} ± {std:.3f}"
+            row.append(result_str)
+
+        console_output_array.append(row)
+
+    number_headers = list(range(1, feature_count + 1))
+    print(tabulate(console_output_array, headers=["Klasyfikator / ilość cech"] + number_headers, tablefmt="fancy_grid"))
