@@ -89,7 +89,7 @@ reduction_names = ["PCA", "SelectKBest"]
 
 # Sekcja 7: Porównanie ilości cech
 
-comparation_results = featureComparasion(X, y, GaussianNB(), reduction_names)
+comparation_results = featureComparasion(X, y, DecisionTreeClassifier(), reduction_names)
 
 # Sekcja 7: Esktrakcja vs Selekcja cech
 
