@@ -57,6 +57,10 @@ def evaluate_features(X, y, classifiers, column_names, reduction_methods, best_f
 
 
 def featureComparasion(X, y, classifier, reduction_names):
+    """
+    Przeprowadza walidację krzyżową łączącą zbalansowanie (BorderlineSMOTE), 
+    standaryzację danych w celu porównania wpływu wyboru liczby cech.
+    """
     
     rskf = RepeatedStratifiedKFold(n_splits=5, n_repeats=2)
     smote = BorderlineSMOTE()

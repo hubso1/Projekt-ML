@@ -95,6 +95,8 @@ def featureVisuilizer():
 
 
 def comparationVisuilizer():
+    """Funkcja pokazująca wyniki porównania cech z pliku
+    """
     try:
         data_features = np.load("results/comparation_results.npz", allow_pickle=True)
         comparation_results = data_features["comparation_results"]
