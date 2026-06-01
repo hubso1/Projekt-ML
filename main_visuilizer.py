@@ -103,12 +103,15 @@ def comparationVisuilizer():
     except FileNotFoundError:
         print("\n Nie znaleziono pliku results_features.npz")
         return
-    
+    best_score_index = 0
     console_output_array = []
 
     for reduction_index, reduction_name in enumerate(reduction_names):
         row = [reduction_name]
         for feature_index in range(0, feature_count):
+            if reduction_name == "SelectKBest":
+                if np.mean(comparation_results[reduction_index, feature_index]) > np.mean(comparation_results[reduction_index, best_score_index]):
+                    best_score_index = feature_index
             mean = np.mean(comparation_results[reduction_index, feature_index])
             std = np.std(comparation_results[reduction_index, feature_index])
 
@@ -119,3 +122,5 @@ def comparationVisuilizer():
 
     number_headers = list(range(1, feature_count + 1))
     print(tabulate(console_output_array, headers=["Klasyfikator / ilość cech"] + number_headers, tablefmt="fancy_grid"))
+
+    return best_score_index

@@ -6,7 +6,7 @@ from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 from imblearn.over_sampling import BorderlineSMOTE
 
-def evaluate_features(X, y, classifiers, column_names, reduction_methods):
+def evaluate_features(X, y, classifiers, column_names, reduction_methods, best_feature_index):
     """
     Przeprowadza walidację krzyżową łączącą zbalansowanie (BorderlineSMOTE), 
     standaryzację danych oraz redukcję wymiarowości do 2 cech.
@@ -38,7 +38,7 @@ def evaluate_features(X, y, classifiers, column_names, reduction_methods):
                 if fold_index == 0:
                     selected_mask = reducer.get_support()
                     best_features = np.array(column_names[:-1])[selected_mask]
-                    print(f"\n[INFO] SelectKBest wybrało 2 najważniejsze cechy: {best_features}")
+                    print(f"\n[INFO] SelectKBest wybrało {best_feature_index+1} najważniejsze cechy: {best_features}")
             
             else:
                 X_train_reduced = reducer.fit_transform(X_train_res)

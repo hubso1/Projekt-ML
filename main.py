@@ -80,10 +80,7 @@ defaulVisuilizer()
 resamplerVisuilizer()
 
 # print(resampling_results)
-reduction_methods = [
-        ("PCA", PCA(n_components=2)),
-        ("SelectKBest", SelectKBest(score_func=f_classif, k=2))
-    ]
+
 
 reduction_names = ["PCA", "SelectKBest"]
 
@@ -91,7 +88,7 @@ reduction_names = ["PCA", "SelectKBest"]
 
 comparation_results = featureComparasion(X, y, DecisionTreeClassifier(), reduction_names)
 
-# Sekcja 7: Esktrakcja vs Selekcja cech
+
 
 np.savez(
     "results/comparation_results.npz", 
@@ -100,16 +97,24 @@ np.savez(
     feature_count = X.shape[1]
 )
 
-comparationVisuilizer()
+best_score_index = comparationVisuilizer()
 
+# print(best_score_index)
 
-# features_results = evaluate_features(X, y, classifiers, column_names, reduction_methods)
+# Sekcja 7: Esktrakcja vs Selekcja cech
 
-# np.savez(
-#     "results/results_features.npz", 
-#     features_results=features_results, 
-#     classifiers_names=classifiers_names, 
-#     reduction_names=reduction_names
-# )
+reduction_methods = [
+        ("PCA", PCA(n_components=best_score_index+1)),
+        ("SelectKBest", SelectKBest(score_func=f_classif, k=best_score_index+1))
+    ]
 
-# featureVisuilizer()
+features_results = evaluate_features(X, y, classifiers, column_names, reduction_methods, best_score_index)
+
+np.savez(
+    "results/results_features.npz", 
+    features_results=features_results, 
+    classifiers_names=classifiers_names, 
+    reduction_names=reduction_names
+)
+
+featureVisuilizer()
