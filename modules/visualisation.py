@@ -119,3 +119,48 @@ def saveExtractionChart(features_results, classifiers_names, reduction_names):
     
     plt.tight_layout()
     plt.savefig('porownanie_ekstrakcji.png')
+
+def saveFeatureCountComparasionChart(comparation_results, reduction_names, feature_count):
+    """ Generowanie wykresu liniowego pokazującego BAC w zależności od liczby cech.
+
+    Args:
+        comparation_results (array): Wyniki porównania (Metoda x Liczba cech x Folds)
+        reduction_names (list): Nazwy metod (PCA, SelectKBest)
+        feature_count (int): Maksymalna liczba cech
+    """
+
+    plt.figure(figsize=(12, 7))
+    
+    x_values = np.arange(1, feature_count + 1)
+    
+    colors = ['#1f77b4', '#ff7f0e'] 
+    
+    for reduction_index, name in enumerate(reduction_names):
+        means = np.mean(comparation_results[reduction_index], axis=1)
+        
+        plt.plot(x_values, means, marker='o', label=name, linewidth=2.5, markersize=8, color=colors[reduction_index])
+        
+        # Wartosci przy kropkach na wykresie
+        for i, txt in enumerate(means):
+            y_offset = 0.005 if reduction_index == 1 else -0.015
+            va_align = 'bottom' if reduction_index == 1 else 'top'
+            
+            plt.text(x_values[i], txt + y_offset, f'{txt:.3f}', 
+                     ha='center', va=va_align, fontsize=9, fontweight='bold', color=colors[reduction_index])
+        
+    plt.title('Wpływ liczby cech na skuteczność modelu (Decision Tree Classifier)')
+    plt.xlabel('Liczba cech (k / n_components)')
+    plt.ylabel('Balanced Accuracy (BAC)')
+    
+    plt.xticks(x_values)
+    
+    # Dynamiczne skalowanie zakresu osi Y
+    min_val = np.min(comparation_results)
+    max_val = np.max(comparation_results)
+    plt.ylim(min_val - 0.05, max_val + 0.05) 
+    
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend(title='Metoda Redukcji')
+    
+    plt.tight_layout()
+    plt.savefig('porownanie_ilosci_cech.png')

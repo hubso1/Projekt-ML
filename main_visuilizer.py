@@ -1,5 +1,5 @@
 from tabulate import tabulate
-from modules.visualisation import saveResamplingBarChart, saveExtractionChart
+from modules.visualisation import saveResamplingBarChart, saveExtractionChart, saveFeatureCountComparasionChart
 import numpy as np
 
 def fileImport():
@@ -125,4 +125,7 @@ def comparationVisuilizer():
     number_headers = list(range(1, feature_count + 1))
     print(tabulate(console_output_array, headers=["Klasyfikator / ilość cech"] + number_headers, tablefmt="fancy_grid"))
 
+    saveFeatureCountComparasionChart(comparation_results, reduction_names, feature_count)
     return best_score_index
+
+
