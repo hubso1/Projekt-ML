@@ -103,7 +103,7 @@ def comparationVisuilizer():
         reduction_names = data_features["reduction_names"].tolist()
         feature_count = data_features["feature_count"]
     except FileNotFoundError:
-        print("\n Nie znaleziono pliku results_features.npz")
+        print("\n Nie znaleziono pliku comparation_results.npz")
         return
     best_score_index = 0
     console_output_array = []
@@ -129,3 +129,31 @@ def comparationVisuilizer():
     return best_score_index
 
 
+def normalizationVisuilizer():
+    """Funkcja pokazująca czy jest rozkłąd normalny w wynikach
+    """
+    try:
+        data_shapiro = np.load("results/shapiro_results.npz", allow_pickle=True)
+        normalization_results = data_shapiro["normalization_results"]
+        classifiers_names = data_shapiro["classifiers_names"].tolist()
+        reduction_names = data_shapiro["reduction_names"].tolist()
+        alpha = data_shapiro["alpha"]
+    except FileNotFoundError:
+        print("\n Nie znaleziono pliku shapiro_results.npz")
+        return
+
+    console_output_array = []
+
+    for classifier_index, classifier in enumerate(classifiers_names):
+        row = [classifier] 
+
+
+        for red_index, red_name in enumerate(reduction_names):
+
+
+            result_str = f"Rozkłąd normalny: {normalization_results[classifier_index, red_index, 1] > alpha}"
+            row.append(result_str)
+
+        console_output_array.append(row)
+
+    print(tabulate(console_output_array, headers=["Klasyfikator"] + reduction_names, tablefmt="fancy_grid"))
