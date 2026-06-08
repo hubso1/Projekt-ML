@@ -157,3 +157,31 @@ def normalizationVisuilizer():
         console_output_array.append(row)
 
     print(tabulate(console_output_array, headers=["Klasyfikator"] + reduction_names, tablefmt="fancy_grid"))
+
+
+def testsVizualizations():
+    """Funkcja pokazująca pokazująca wyniki testów
+    """
+    try:
+        tests_results = np.load("results/tests_results.npz", allow_pickle=True)
+        results = tests_results["tests_results"]
+        classifiers_names = tests_results["classifiers_names"].tolist()
+        reduction_names = tests_results["reduction_names"].tolist()
+        alpha = tests_results["alpha"]
+    except FileNotFoundError:
+        print("\n Nie znaleziono pliku tests_results.npz")
+        return
+
+    console_output_array = []
+
+    for classifier_index, classifier in enumerate(classifiers_names):
+        row = [classifier] 
+
+        if results[classifier_index, 1] < alpha:
+            row = row + [f"[!] Różnica między {reduction_names[0]} a {reduction_names[1]} jest STATYSTYCZNIE ISTOTNA."]
+        else:
+            row = row + [f"[-] Brak statystycznie istotnych różnic między metodami."]
+        
+        console_output_array.append(row)
+
+    print(tabulate(console_output_array, headers=["Klasyfikator", "wyniki testów"], tablefmt="fancy_grid"))

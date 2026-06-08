@@ -16,20 +16,41 @@ def normalizationTest(classifiers_names, reduction_methods, features_results):
 
 
 
-def run_tests(alpha, classifiers_names, reduction_methods, shapiro_results):
+def runTests(alpha, classifiers_names, reduction_methods, shapiro_results, features_results):
+
+    results = np.zeros((len(classifiers_names), 2), dtype=float)
+    name_pca = reduction_methods[0][0]
+    name_kselect = reduction_methods[1][0]
+
     for classifier_index, classifier in enumerate(classifiers_names):
-        for reduction_index, reduxtion_name in enumerate(reduction_methods):
-            if shapiro_results[classifier_index, reduction_index, 1] > alpha:
-                result = test()
-            else:
-                result = wilcoxon()
+
+        p_val_pca = shapiro_results[classifier_index, 0, 1]
+        p_val_kselect = shapiro_results[classifier_index, 1, 1]
+        
+        data_pca = features_results[classifier_index, 0]
+        data_kselect = features_results[classifier_index, 1]
+
+        if p_val_pca > alpha and p_val_kselect > alpha:
+            stat, p = runTtest(data_pca, data_kselect)
             
-            print(result)
+        else:
+            stat, p = runWixicon(data_pca, data_kselect)
+            
+        results[classifier_index, 0] = stat
+        results[classifier_index, 1] = p
+
+        return results
+        
+        
+
+        
 
 
 
-def ttest():
-    pass
+def runTtest(data1, data2):
+    stat, p_value = ttest_rel(data1, data2)
+    return stat, p_value
 
-def wilcoxon():
-    pass
+def runWixicon(data1, data2):
+    stat, p_value = wilcoxon(data1, data2)
+    return stat, p_value
