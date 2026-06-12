@@ -130,7 +130,7 @@ def comparationVisuilizer():
 
 
 def normalizationVisuilizer():
-    """Funkcja pokazująca czy jest rozkłąd normalny w wynikach
+    """Funkcja pokazująca czy jest rozkład normalny w wynikach
     """
     try:
         data_shapiro = np.load("results/shapiro_results.npz", allow_pickle=True)
@@ -151,7 +151,7 @@ def normalizationVisuilizer():
         for red_index, red_name in enumerate(reduction_names):
 
 
-            result_str = f"Rozkłąd normalny: {normalization_results[classifier_index, red_index, 1] > alpha}"
+            result_str = f"Rozkład normalny: {normalization_results[classifier_index, red_index, 1] > alpha}"
             row.append(result_str)
 
         console_output_array.append(row)
