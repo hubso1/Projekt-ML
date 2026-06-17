@@ -14,8 +14,10 @@ from sklearn.svm import SVC
 from tabulate import tabulate
 from imblearn.over_sampling import SMOTE, BorderlineSMOTE
 from imblearn.under_sampling import RandomUnderSampler, NearMiss
-from main_visuilizer import defaulVisuilizer, resamplerVisuilizer, featureVisuilizer, comparationVisuilizer
+from main_visuilizer import defaulVisuilizer, resamplerVisuilizer, featureVisuilizer, comparationVisuilizer, normalizationVisuilizer, testsVizualizations
 from sklearn.feature_selection import SelectKBest, f_classif
+# from scipy.stats import shapiro, ttest_rel, wilcoxon
+from modules.tests import normalizationTest, runTests
 
 # Sekcja 1: Wczytanie danych
 data = np.loadtxt("data/updated_pollution_dataset.csv", delimiter=",", dtype="object")
@@ -118,3 +120,35 @@ np.savez(
 )
 
 featureVisuilizer()
+
+# Sekcja 8: Testy
+
+alpha = 0.05
+
+normalization_results = normalizationTest(classifiers_names, reduction_methods, features_results)
+
+np.savez(
+    "results/shapiro_results.npz", 
+    normalization_results=normalization_results, 
+    classifiers_names=classifiers_names, 
+    reduction_names=reduction_names,
+    alpha = alpha
+)
+
+normalizationVisuilizer()
+
+tests_results = runTests(alpha, classifiers_names, reduction_methods, normalization_results, features_results)
+
+np.savez(
+    "results/tests_results.npz", 
+    tests_results=tests_results, 
+    classifiers_names=classifiers_names, 
+    reduction_names=reduction_names,
+    alpha = alpha
+)
+
+testsVizualizations()
+
+
+# wix_result = wilcoxon(avg_results[:,0], avg_results[:,1])
+# print(wix_result)
